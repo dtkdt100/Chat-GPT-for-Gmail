@@ -1,0 +1,28 @@
+{
+  "name": "ChatGPT for Google",
+  "description": "Display ChatGPT response to replace your email",
+  "version": "1.0.0",
+  "manifest_version": 3,
+  "icons": {
+    "16": "logo.png",
+    "32": "logo.png",
+    "48": "logo.png",
+    "128": "logo.png"
+  },
+  "host_permissions": ["https://*.openai.com/"],
+  "permissions": ["storage", "https://mail.google.com/*"],
+  "background": {
+    "service_worker": "background.js"
+  },
+  "action": {
+    "default_popup": "popup.html"
+  },
+  "content_scripts": [
+    {
+      "css": [ "content-script.css" ],
+      "matches": [ "https://mail.google.com/*" ],
+      "js": ["content-script.js"],
+      "run_at": "document_end"
+    }
+  ]
+}

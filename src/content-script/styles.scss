@@ -1,0 +1,124 @@
+@keyframes gpt-pulse {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.5;
+  }
+}
+
+.chat-gpt-suggestionsBox {
+  display: flex;
+  z-index: 99;
+  position: absolute;
+  direction: ltr;
+  align-items: center;
+  flex-direction: column;
+  justify-content: center;
+  background-color: white;
+  border: 0px solid;
+}
+
+.chat-gpt-rewrite {
+  width: 100%;
+  border: 1px solid rgb(230, 232, 238);
+  display: flex;
+  position: relative;
+  min-width: 366px;
+  box-shadow: rgba(63, 62, 77, 0.2) 0px 2px 14px 0px;
+  transition: height 0.1s ease 0s;
+  border-radius: 3px;
+  flex-direction: column;
+  background-color: rgb(255, 255, 255);
+}
+
+.chat-gpt-button {
+  width: 28px;
+  height: 28px;
+  display: flex;
+  z-index: 20000000000;
+  position: relative;
+  box-shadow: 0 2px 14px 0 rgba(63, 62, 77, 0.20);
+  transition: all 0.5s ease;
+  align-items: center;
+  border-color: rgb(214, 216, 222);
+  border-style: solid;
+  border-width: 1px;
+  border-radius: 15px;
+  justify-content: center;
+  background-color: white;
+  padding: 0;
+}
+
+.chat-gpt-button:hover {
+  opacity: 0.75;
+}
+
+// .chat-gpt-container {
+//   margin-bottom: 30px;
+//   border-radius: 8px;
+//   border: 4px solid;
+//   flex-basis: 0;
+//   flex-grow: 1;
+
+//   &.sidebar-free {
+//     margin-left: 60px;
+//     height: fit-content;
+//   }
+
+//   @media (prefers-color-scheme: light) {
+//     border-color: #dadce0;
+//   }
+
+//   @media (prefers-color-scheme: dark) {
+//     border-color: #3c4043;
+//     & #answer {
+//       background-color: #202124;
+//     }
+//   }
+
+//   p {
+//     margin: 0;
+//   }
+
+//   .gpt-inner {
+//     padding: 15px;
+//     line-height: 1.5;
+//   }
+
+//   .icon-and-text {
+//     display: flex;
+//     align-items: center;
+//     gap: 6px;
+//   }
+
+//   .manual-btn {
+//     cursor: pointer;
+//   }
+
+//   .gpt-loading {
+//     color: #b6b8ba;
+//     animation: gpt-pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+//   }
+
+//   #answer {
+//     font-size: 15px;
+//     line-height: 1.6;
+//     border-radius: 8px;
+
+//     pre {
+//       margin-top: 10px;
+//     }
+
+//     code {
+//       white-space: pre-wrap;
+//       word-break: break-all;
+//     }
+
+//     pre code.hljs {
+//       padding: 0;
+//       background-color: transparent;
+//     }
+//   }
+// }
