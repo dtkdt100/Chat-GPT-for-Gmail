@@ -1,18 +1,11 @@
 import 'github-markdown-css'
 import { render } from 'preact'
 import ChatGPTCard from './ChatGPTCard'
-//import ChatGPTQuery from './ChatGPTQuery'
-import { config } from './search-engine-configs.mjs'
 import './styles.scss'
-import { getPossibleElementByQuerySelector } from './utils.mjs'
-import { getUserConfig } from '../config'
 
 import { SUGGESTIONS_BOX, REWRITE_DIALOG } from './consts' 
 
-coutner = 0;
-
-const delay = ms => new Promise(res => setTimeout(res, ms));
-
+can_listen_to_mouse = false;
 
 function createBaseElement(elementType='div', className) {
   const container = document.createElement(elementType)
@@ -23,6 +16,9 @@ function createBaseElement(elementType='div', className) {
 }
 
 function getLastTextPosition(textElement) {
+  if (textElement.childElementCount == 0) {
+    textElement.innerHTML = "<div>"+textElement.innerHTML+"</div>";
+  }
   return textElement.childNodes[textElement.childNodes.length-1].getBoundingClientRect();
 }
 
@@ -57,6 +53,30 @@ function highLightText(textElement) {
   sel.selectAllChildren(textElement);
 }
 
+function printMousePos(event) {
+  if (can_listen_to_mouse) {
+    var elementExists2 = document.getElementsByClassName(SUGGESTIONS_BOX);
+
+    if (elementExists2.length > 0) {
+      var pos = elementExists2[0].getBoundingClientRect()
+
+      xMin = pos.x;
+      yMin = pos.y;
+      XMax = pos.right;
+      YMax = pos.bottom;
+      XMouse = event.clientX;
+      YMouse = event.clientY;
+
+      if (!(XMouse >= xMin && XMouse <= XMax && YMouse >= yMin && YMouse <= YMax)) {
+        elementExists2[0].remove();
+        can_listen_to_mouse=false;
+      }
+
+    }
+  }
+}
+
+
 async function run() {
 
   const div = document.body;
@@ -65,7 +85,7 @@ async function run() {
     mutations.forEach(function(mutation) {
     const currentUrl = window.location.href ;
 
-    if (currentUrl == "https://mail.google.com/mail/u/0/#inbox?compose=new") {
+    if (currentUrl.startsWith("https://mail.google.com/mail/u/0/#inbox?compose=")) {
         const bodyInput = document.querySelector('.Am.Al.editable');
 
 
@@ -79,13 +99,14 @@ async function run() {
               container.innerHTML = '<svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" width="24px" height="24px" viewBox="0 0 24 24" style="enable-background:new 0 0 24 24;" xml:space="preserve"> <style type="text/css"> .st0{fill:#d665be;} .st1{fill:#FFFFFF;} </style> <defs> </defs> <circle class="st0" cx="12" cy="12" r="12"/> <g> <path class="st1" d="M11.3,11.8c-0.4,0-0.7-0.3-0.7-0.7c0-0.4,0.3-0.7,0.6-0.7c-0.2-0.2-0.5-0.3-0.8-0.3c-0.9,0-1.6,1-1.6,2.3 c0,0.4,0.1,0.8,0.2,1.1c0.1-0.2,0.2-0.3,0.4-0.3c0.3,0,0.5,0.2,0.5,0.5c0,0.3-0.2,0.5-0.5,0.5c0,0,0,0,0,0c0.3,0.3,0.6,0.5,1,0.5 c0.9,0,1.6-1,1.6-2.3c0-0.3,0-0.6-0.1-0.9C11.7,11.7,11.5,11.8,11.3,11.8z"/> <path class="st1" d="M16.4,12.2c-0.2,0-0.4-0.2-0.4-0.4s0.2-0.4,0.4-0.4c0,0,0,0,0,0c-0.1-0.1-0.3-0.2-0.5-0.2 c-0.5,0-0.9,0.6-0.9,1.3c0,0.2,0,0.4,0.1,0.6c0.1-0.1,0.1-0.1,0.3-0.1c0.2,0,0.3,0.1,0.3,0.3c0,0.2-0.1,0.3-0.3,0.3 c0.1,0.1,0.3,0.2,0.5,0.2c0.5,0,0.9-0.6,0.9-1.3c0-0.2,0-0.3-0.1-0.4C16.7,12.1,16.6,12.2,16.4,12.2z"/> <path class="st1" d="M19.9,10.2c0-0.7-0.1-1.4-0.5-1.9c-0.6-1-2-1.1-3-1.3c-1.1-0.2-2.1-0.3-3.2-0.4l-0.8-1.5 c0.3-0.2,0.4-0.5,0.4-0.9c0-0.6-0.5-1.1-1.1-1.1c-0.6,0-1.1,0.5-1.1,1.1c0,0.6,0.4,1.1,1,1.1l-0.1,1.1c-0.1,0-0.3,0-0.4,0 c-1-0.1-2-0.2-3-0.2c-1.1,0-2.4,0.1-3.1,1.1C4.8,7.5,4.7,7.7,4.6,7.9C4.5,8.4,4.4,9,4.4,9.5c0,0.1,0.3,5.2,0.3,5.2 c0.1,0.4,0.1,0.8,0.2,1.2c0.2,1.1,0.6,2.1,1.8,2.2c2,0.2,4.1,0.1,6-0.1c0.9-0.1,1.9-0.2,2.8-0.4c0,0,0,0,0,0 c0.3-0.1,0.6,0.1,0.8,0.4c0.2,0.4,0.2,0.8,0.1,1.2c0,0.2,0.2,0.3,0.3,0.2c0.4-0.2,0.7-0.5,1-0.7c0.6-0.5,1.1-1.2,1.5-1.9 c0.4-0.8,0.5-1.8,0.6-2.7c0,0,0-1.3,0-1.5C19.9,12.8,20.1,10.3,19.9,10.2z M11.5,3.7c0-0.2,0.2-0.4,0.4-0.4c0.2,0,0.4,0.2,0.4,0.4 s-0.2,0.4-0.4,0.4C11.7,4.2,11.5,4,11.5,3.7z M18.7,10.7c0,0.9,0,1.7,0,2.6c0,0.4,0,0.8-0.1,1.2c-0.1,0.9-0.2,1.2-1.1,1.4 c-2.5,0.3-4.9,0.7-7.4,0.7c-0.6,0-1.1,0-1.7,0c-0.1,0-0.2,0-0.4-0.1c-0.1-0.1-0.2-0.2-0.3-0.4c-0.6-1.9-0.8-4-0.6-6 c0-0.5,0-1.1,0.3-1.5c0.4-0.7,2.1-0.3,2.7-0.3c0.4,0,0.8,0,1.3,0.1c0.2,0,0.3,0.1,0.4,0.2c0.2,0.3,0.4,0.7,0.5,0.7 c0.1,0.1,1.9,0.2,2.3,0.2c0.1,0,0.1,0,0.1-0.1L14.9,9c0.1-0.2,0.3-0.3,0.5-0.2c0.7,0.1,1.4,0.2,2.2,0.3c0.5,0.1,0.9,0.3,1,0.8 C18.7,10.2,18.7,10.4,18.7,10.7z"/> </g> </svg>';
 
               container.onclick = async () => {
-                highLightText(bodyInput);
 
                 
                 const container2 = document.createElement('div'); 
                 container2.className = SUGGESTIONS_BOX;
 
                 setContainerPosUnderText(container2, bodyInput);
+                highLightText(bodyInput);
+
 
                 const container3 = document.createElement('div');
                 container3.className = REWRITE_DIALOG;
@@ -97,6 +118,12 @@ async function run() {
                 );
 
                 document.body.appendChild(container2);
+
+                setTimeout(function() {
+                  can_listen_to_mouse=true;
+                }, 1);
+
+               // can_listen_to_mouse=true;
 
               };
               const father = createBaseElement('div', "no");
@@ -116,11 +143,12 @@ async function run() {
             }
              
             if (elementExists.length > 0 && document.activeElement != bodyInput) {
-              console.log(document.activeElement);
               if (document.activeElement != document.getElementsByClassName("chat-gpt-button")[0]) {
                 elementExists[0].remove();
               }
             }
+
+            
             
           });
         });
@@ -130,6 +158,9 @@ async function run() {
           childList: true,
           characterData: true
         });
+
+        
+        document.addEventListener("click", printMousePos);
       }
       
     });

@@ -3,7 +3,6 @@ import PropTypes from 'prop-types'
 import ReactMarkdown from 'react-markdown'
 import rehypeHighlight from 'rehype-highlight'
 import Browser from 'webextension-polyfill'
-import './highlight.scss'
 
 function ChatGPTQuery(props) {
   const [answer, setAnswer] = useState('')

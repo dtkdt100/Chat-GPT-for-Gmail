@@ -50,6 +50,8 @@ async function copyFiles(entryPoints, targetDir) {
 }
 
 async function build() {
+
+  console.log("Starting build")
   await deleteOldDir()
   await runEsbuild()
 
@@ -78,6 +80,8 @@ async function build() {
   )
 
   await zipFolder(`./${outdir}/firefox`)
+
+  console.log("Success")
 }
 
 build()
