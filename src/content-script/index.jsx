@@ -42,8 +42,8 @@ function setChatGPTButton(container, textDialog) {
 function setContainerPosUnderText(container, textDialog) {
   var pos = getLastTextPosition(textDialog);
   container.style.top = (Math.ceil(pos.top+pos.height))+"px";
-  container.style.left = (pos.left-10)+"px";
-  container.style.width = "360px";
+  container.style.left = (pos.left)+"px";
+  container.style.width = "330px";
   container.style.position = "absolute";
 }
 
@@ -84,8 +84,6 @@ function listenToMouseEvent(event) {
 
 function changed(changes, area) {
   enable = changes["on"].newValue==1;
-  document.body.appendChild("");
-
 }
 
 function removeChatGPTButton() {
@@ -204,7 +202,7 @@ async function run() {
 }
 
 async function getConfigFirst() {
-  enable = (await getUserConfig())==1;
+  enable = (await getUserConfig()).on==1;
   run();
 }
 
