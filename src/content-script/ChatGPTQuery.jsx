@@ -3,16 +3,17 @@ import PropTypes from 'prop-types'
 import ReactMarkdown from 'react-markdown'
 import rehypeHighlight from 'rehype-highlight'
 import Browser from 'webextension-polyfill'
+import { Answer } from '../messaging.js'
 
 function ChatGPTQuery(props) {
-  const [answer, setAnswer] = useState('')
+  const [answer, setAnswer] = useState(null)
   const [error, setError] = useState('')
 
   useEffect(() => {
     const port = Browser.runtime.connect()
     const listener = (msg) => {
-      if (msg.answer) {
-        setAnswer('' + msg.answer)
+      if (msg.text) {
+        setAnswer(msg)
       } else if (msg.error === 'UNAUTHORIZED' || msg.error === 'CLOUDFLARE') {
         setError(msg.error)
       } else {
@@ -31,7 +32,7 @@ function ChatGPTQuery(props) {
     return (
       <div id="answer" dir="auto">
         <ReactMarkdown rehypePlugins={[[rehypeHighlight, { detect: true }]]}>
-          {answer}
+          {answer.text}
         </ReactMarkdown>
       </div>
     )

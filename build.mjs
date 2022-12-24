@@ -13,7 +13,7 @@ async function runEsbuild() {
   await esbuild.build({
     entryPoints: [
       'src/content-script/index.jsx',
-      'src/background/index.mjs',
+      'src/background/index.ts',
       'src/popup/index.jsx',
     ],
     bundle: true,

@@ -1,13 +1,15 @@
 import ExpiryMap from 'expiry-map'
 import { v4 as uuidv4 } from 'uuid'
 import Browser from 'webextension-polyfill'
-import { fetchSSE } from './fetch-sse.mjs'
+import { sendMessageFeedback, setConversationProperty } from './chatgpt.js'
+import { fetchSSE } from './fetch-sse.js'
 
+import { Answer } from '../messaging.js'
 const KEY_ACCESS_TOKEN = 'accessToken'
 
 const cache = new ExpiryMap(10 * 1000)
 
-async function getAccessToken() {
+async function getAccessToken(): Promise<string> {
   if (cache.get(KEY_ACCESS_TOKEN)) {
     return cache.get(KEY_ACCESS_TOKEN)
   }
@@ -23,12 +25,20 @@ async function getAccessToken() {
   return data.accessToken
 }
 
-async function generateAnswers(port, question) {
+async function generateAnswers(port: Browser.Runtime.Port, question: string) {
   const accessToken = await getAccessToken()
+
+  let conversationId: string | undefined
+  const deleteConversation = () => {
+    if (conversationId) {
+      setConversationProperty(accessToken, conversationId, { is_visible: false })
+    }
+  }
 
   const controller = new AbortController()
   port.onDisconnect.addListener(() => {
     controller.abort()
+    deleteConversation()
   })
 
   await fetchSSE('https://chat.openai.com/backend-api/conversation', {
@@ -53,15 +63,22 @@ async function generateAnswers(port, question) {
       model: 'text-davinci-002-render',
       parent_message_id: uuidv4(),
     }),
-    onMessage(message) {
+    onMessage(message: string) {
       console.debug('sse message', message)
       if (message === '[DONE]') {
+        port.postMessage({ event: 'DONE' })
+        deleteConversation()
         return
       }
       const data = JSON.parse(message)
       const text = data.message?.content?.parts?.[0]
+      conversationId = data.conversation_id
       if (text) {
-        port.postMessage({ answer: text })
+        port.postMessage({
+          text,
+          messageId: data.message.id,
+          conversationId: data.conversation_id,
+        } as Answer)
       }
     },
   })
@@ -72,10 +89,17 @@ Browser.runtime.onConnect.addListener((port) => {
     console.debug('received msg', msg)
     try {
       await generateAnswers(port, msg.question)
-    } catch (err) {
+    } catch (err: any) {
       console.error(err)
       port.postMessage({ error: err.message })
       cache.delete(KEY_ACCESS_TOKEN)
     }
   })
+})
+
+Browser.runtime.onMessage.addListener(async (message) => {
+  if (message.type === 'FEEDBACK') {
+    const token = await getAccessToken()
+    await sendMessageFeedback(token, message.data)
+  }
 })

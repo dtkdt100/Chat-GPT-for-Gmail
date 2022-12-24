@@ -6,8 +6,18 @@ import './styles.scss'
 
 import { SUGGESTIONS_BOX, REWRITE_DIALOG } from './consts' 
 
-can_listen_to_mouse = false;
 enable = true;
+selected_text = '';
+
+function getSelectedText() {
+  var text = "";
+  if (typeof window.getSelection != "undefined") {
+      text = window.getSelection().toString();
+  } else if (typeof document.selection != "undefined" && document.selection.type == "Text") {
+      text = document.selection.createRange().text;
+  }
+  return text;
+}
 
 function createBaseElement(elementType='div', className) {
   const container = document.createElement(elementType)
@@ -54,32 +64,38 @@ function highLightText(textElement) {
 }
 
 function listenToMouseEvent(event) {
-  if (can_listen_to_mouse) {
-    var elementExists2 = document.getElementsByClassName(SUGGESTIONS_BOX);
 
-    if (elementExists2.length > 0) {
-      var pos = elementExists2[0].getBoundingClientRect()
+   var elementExists2 = document.getElementsByClassName(SUGGESTIONS_BOX);
+  // const bodyInput = document.querySelector('.Am.Al.editable');
+  // bodyInput.innerHTML = document.getElementsByClassName(REWRITE_DIALOG)[0].innerHTML;
+  // elementExists2[0].remove();
 
-      xMin = pos.x;
-      yMin = pos.y;
-      XMax = pos.right;
-      YMax = pos.bottom;
-      XMouse = event.clientX;
-      YMouse = event.clientY;
+  if (elementExists2.length > 0) {
+    var pos = elementExists2[0].getBoundingClientRect()
 
-      if (!(XMouse >= xMin && XMouse <= XMax && YMouse >= yMin && YMouse <= YMax)) {
+    xMin = pos.x;
+    yMin = pos.y;
+    XMax = pos.right;
+    YMax = pos.bottom;
+    XMouse = event.clientX;
+    YMouse = event.clientY;
+    if (document.getElementsByClassName("chat-gpt-button").length > 0){
+      var pos2 = document.getElementsByClassName("chat-gpt-button")[0].getBoundingClientRect()
+      xMin2 = pos2.x;
+      yMin2 = pos2.y;
+      XMax2 = pos2.right;
+      YMax2 = pos2.bottom;
+  
+      if (!(XMouse >= xMin && XMouse <= XMax && YMouse >= yMin && YMouse <= YMax) &&
+       !(XMouse >= xMin2 && XMouse <= XMax2 && YMouse >= yMin2 && YMouse <= YMax2)) {
         elementExists2[0].remove();
         
       }
-      else {
-        const bodyInput = document.querySelector('.Am.Al.editable');
-        bodyInput.innerHTML = document.getElementsByClassName(REWRITE_DIALOG)[0].innerHTML;
-        elementExists2[0].remove();
-      }
-      can_listen_to_mouse=false;
-
     }
+    
+
   }
+
 }
 
 function changed(changes, area) {
@@ -130,9 +146,20 @@ async function run() {
                       setContainerPosUnderText(container2, bodyInput);
                       highLightText(bodyInput);
 
+                      selected_text = getSelectedText();
+
 
                       const container3 = document.createElement('div');
                       container3.className = REWRITE_DIALOG;
+                      container2.onclick = () => {
+                        var elementExists2 = document.getElementsByClassName(SUGGESTIONS_BOX);
+                        bodyInput.innerHTML = document.getElementsByClassName(REWRITE_DIALOG)[0].innerHTML;
+                        elementExists2[0].remove();
+                        //listenToMouseEvent();
+                      }
+                      
+
+
                       container2.appendChild(container3);
 
                       render(
@@ -142,9 +169,7 @@ async function run() {
 
                       document.body.appendChild(container2);
 
-                      setTimeout(function() {
-                        can_listen_to_mouse=true;
-                      }, 1);
+                      
                     };
                     const father = createBaseElement('div', "no");
                     father.setAttribute("style", "position: absolute; z-index: 20000000000;");
@@ -165,7 +190,14 @@ async function run() {
                   if (elementExists.length > 0 && document.activeElement != bodyInput) {
                     removeChatGPTButton();
                   }
+
+                  
                 }
+
+                // var elementExists2 = document.getElementsByClassName(SUGGESTIONS_BOX);
+                // if (elementExists2.length > 0 && document.activeElement != bodyInput && selected_text != getSelectedText()) {
+                //   elementExists2[0].remove();
+                // }                
               }
 
               
