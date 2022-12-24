@@ -8,35 +8,28 @@ function Popup() {
 
   useEffect(() => {
     getUserConfig().then((config) => {
-      setTriggerMode(config.triggerMode || 'always')
+      setTriggerMode(config.on || 1)
+      document.querySelector("input[type=checkbox]").checked = config.on;
     })
   }, [])
 
-  const onTriggerModeChange = useCallback((e) => {
-    const mode = e.target.value
-    setTriggerMode(mode)
-    updateUserConfig({ triggerMode: mode })
-  }, [])
+  function onTriggerModeChange(event) {
+    const checkbox = event.target;
+    const enable = checkbox.checked ? 1 : 0;
+    setTriggerMode(enable)
+    updateUserConfig({ on: enable })
+  }
+
 
   return (
     <div className="container">
       <form>
-        <fieldset onChange={onTriggerModeChange}>
-          <legend>Trigger Mode</legend>
-          {Object.entries(TRIGGER_MODES).map(([value, label]) => {
-            return (
-              <label htmlFor={value} key={value}>
-                <input
-                  type="radio"
-                  id={value}
-                  name="triggerMode"
-                  value={value}
-                  checked={triggerMode === value}
-                />
-                {label}
-              </label>
-            )
-          })}
+        <fieldset>
+          <legend>Enable ChatGPT for Gmail</legend>
+          <label className="switch">
+            <input type="checkbox" onChange={onTriggerModeChange} />
+            <span className="slider round"></span>
+          </label>
         </fieldset>
       </form>
     </div>
