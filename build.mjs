@@ -14,7 +14,7 @@ async function runEsbuild() {
     entryPoints: [
       'src/content-script/index.jsx',
       'src/background/index.ts',
-      'src/popup/index.jsx',
+      'src/popup/index.tsx',
     ],
     bundle: true,
     outdir: outdir,

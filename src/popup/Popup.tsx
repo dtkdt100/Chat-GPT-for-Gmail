@@ -1,21 +1,24 @@
-import '@picocss/pico'
 import { useCallback, useEffect, useState } from 'preact/hooks'
-import { getUserConfig, updateUserConfig, TRIGGER_MODES } from '../config'
+import { getUserConfig, updateUserConfig } from '../config'
 import './styles.css'
 
+
 function Popup() {
-  const [triggerMode, setTriggerMode] = useState()
+  const [number, setTriggerMode] = useState<number>()
 
   useEffect(() => {
     getUserConfig().then((config) => {
       setTriggerMode(config.on || 1)
-      document.querySelector("input[type=checkbox]").checked = config.on;
+      const checkbox = document.querySelector('input[type=checkbox]');
+      if (checkbox && 'checked' in checkbox) {
+        checkbox.checked = config.on;
+      }
     })
   }, [])
 
   function onTriggerModeChange(event) {
     const checkbox = event.target;
-    const enable = checkbox.checked ? 1 : 0;
+    const enable: number = (checkbox.checked) ? 1 : 0;
     setTriggerMode(enable)
     updateUserConfig({ on: enable })
   }
@@ -35,5 +38,7 @@ function Popup() {
     </div>
   )
 }
+
+
 
 export default Popup
