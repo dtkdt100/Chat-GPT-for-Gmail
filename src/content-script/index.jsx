@@ -4,7 +4,7 @@ import { onChanged, getUserConfig } from '../config'
 import ChatGPTCard from './ChatGPTCard'
 import './styles.scss'
 
-import { BUTTON, SUGGESTIONS_BOX, REWRITE_DIALOG, NEW_MESSAGE_INPUT, ERROR_CLASS_NAME } from './consts' 
+import { BUTTON, SUGGESTIONS_BOX, REWRITE_DIALOG, NEW_MESSAGE_INPUT, ERROR_CLASS_NAME, URL_PATTERN } from './consts' 
 
 enable = true;
 observer_on_new_message = null;
@@ -160,8 +160,7 @@ function handleMutations(mutations) {
     if (!enable) {
       removeChatGPTButton();
     } else {
-      const currentUrl = window.location.href;
-      if (currentUrl.startsWith("https://mail.google.com/mail/u/0/#inbox?compose=")) {
+      if (URL_PATTERN.test(window.location.href)) {
         if (observer_on_new_message == null) {
           const bodyInput = document.querySelector(NEW_MESSAGE_INPUT);
           observer_on_new_message = new MutationObserver(function(mutations) {
