@@ -4,7 +4,7 @@ import { onChanged, getUserConfig } from '../config'
 import ChatGPTCard from './ChatGPTCard'
 import './styles.scss'
 
-import { SUGGESTIONS_BOX, REWRITE_DIALOG } from './consts' 
+import { BUTTON, SUGGESTIONS_BOX, REWRITE_DIALOG, NEW_MESSAGE_INPUT, ERROR_CLASS_NAME } from './consts' 
 
 enable = true;
 observer_on_new_message = null;
@@ -62,7 +62,7 @@ function listenToMouseEvent(event) {
   const { clientX: XMouse, clientY: YMouse } = event;
   if (isWithinBounds(XMouse, YMouse, suggestionsBox[0].getBoundingClientRect())) return;
 
-  const chatButton = document.getElementsByClassName("chat-gpt-button");
+  const chatButton = document.getElementsByClassName(BUTTON);
   if (chatButton.length==0) return;
   if (isWithinBounds(XMouse, YMouse, chatButton[0].getBoundingClientRect())) return;
 
@@ -75,7 +75,7 @@ function changed(changes, area) {
 
 
 function removeChatGPTButton() {
-  const chatGPTButtonElements = document.getElementsByClassName("chat-gpt-button");
+  const chatGPTButtonElements = document.getElementsByClassName(BUTTON);
   if (chatGPTButtonElements.length === 0 || document.activeElement === chatGPTButtonElements[0]) return;
   chatGPTButtonElements[0].remove();
 }
@@ -87,16 +87,16 @@ function removeChatGPTSuggestionBox() {
 }
 
 function createButtonElement() {
-  const container = createBaseElement('button', "chat-gpt-button");
+  const container = createBaseElement('button', BUTTON);
   container.innerHTML = getChatGPTSvgLogo();
   return container;
 }
 
-function setContainer2OnClick(container2, bodyInput) {
-  container2.onclick = () => {
+function setRewriteDialogOnClick(container, bodyInput) {
+  container.onclick = () => {
     const rewriteDialogElements = document.getElementsByClassName(REWRITE_DIALOG);
     if (rewriteDialogElements.length > 0) {
-      if (rewriteDialogElements[0].childNodes[0].id != "chatGPTError") {
+      if (rewriteDialogElements[0].childNodes[0].id != ERROR_CLASS_NAME) {
         bodyInput.innerHTML = rewriteDialogElements[0].innerHTML;
       }
       removeChatGPTSuggestionBox();
@@ -104,31 +104,30 @@ function setContainer2OnClick(container2, bodyInput) {
   }
 }
 
-function renderChatCard(container2, bodyInput) {
-  const container3 = document.createElement('div');
-  container3.className = REWRITE_DIALOG;
-  container2.appendChild(container3);
+function renderChatCard(suggestionsBox, bodyInput) {
+  const rewriteDialog = createBaseElement('div', REWRITE_DIALOG);
+  suggestionsBox.appendChild(rewriteDialog);
   render(
-    <ChatGPTCard question={"complete my email. write only the email: \n" + bodyInput.innerHTML} triggerMode={'always'} />,
-    container3,
+    <ChatGPTCard question={"complete my email. write only the email: \n" + bodyInput.innerHTML}/>,
+    rewriteDialog,
   );
 }
 
-function createContainer2Element(bodyInput) {
-  const container2 = document.createElement('div'); 
-  container2.className = SUGGESTIONS_BOX;
-  setContainerPosUnderText(container2, bodyInput);
+function createSuggestionBoxElement(bodyInput) {
+  const suggestionsBox = document.createElement('div'); 
+  suggestionsBox.className = SUGGESTIONS_BOX;
+  setContainerPosUnderText(suggestionsBox, bodyInput);
   highlightText(bodyInput);
-  return container2;
+  return suggestionsBox;
 }
 
 
 function setChatGPTButtonOnClick(container, bodyInput) {
   container.onclick = async () => {
-    const container2 = createContainer2Element(bodyInput);
-    setContainer2OnClick(container2, bodyInput);
-    renderChatCard(container2, bodyInput);
-    document.body.appendChild(container2);
+    const suggestionsBox = createSuggestionBoxElement(bodyInput);
+    setRewriteDialogOnClick(suggestionsBox, bodyInput);
+    renderChatCard(suggestionsBox, bodyInput);
+    document.body.appendChild(suggestionsBox);
   };
 }
 
@@ -148,7 +147,7 @@ function createChatGPTButton(bodyInput) {
 }
 
 function handleChatGPTButton(bodyInput) {
-  const elementExists = document.getElementsByClassName("chat-gpt-button");
+  const elementExists = document.getElementsByClassName(BUTTON);
   if (elementExists.length === 0 && document.activeElement === bodyInput) {
     createChatGPTButton(bodyInput);
   } else if (elementExists.length > 0 && document.activeElement !== bodyInput) {
@@ -164,7 +163,7 @@ function handleMutations(mutations) {
       const currentUrl = window.location.href;
       if (currentUrl.startsWith("https://mail.google.com/mail/u/0/#inbox?compose=")) {
         if (observer_on_new_message == null) {
-          const bodyInput = document.querySelector('.Am.Al.editable');
+          const bodyInput = document.querySelector(NEW_MESSAGE_INPUT);
           observer_on_new_message = new MutationObserver(function(mutations) {
             mutations.forEach(async function(mutation) {
               if (enable) {
@@ -183,7 +182,7 @@ function handleMutations(mutations) {
       }
     }
 
-    if (document.querySelector('.Am.Al.editable') == null && observer_on_new_message != null) {
+    if (document.querySelector(NEW_MESSAGE_INPUT) == null && observer_on_new_message != null) {
       observer_on_new_message.disconnect();
       removeChatGPTButton();
       removeChatGPTSuggestionBox();
