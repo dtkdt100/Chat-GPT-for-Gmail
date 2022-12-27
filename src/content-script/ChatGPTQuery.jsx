@@ -60,10 +60,10 @@ function ChatGPTQuery(props) {
     )
   }
   if (error) {
-    return <p className="gpt-inner">Failed to load response from ChatGPT</p>
+    return <p className="gpt-inner" id="chatGPTError">Failed to load response from ChatGPT</p>
   }
 
-  return <p className="gpt-loading gpt-inner">Waiting for ChatGPT response...</p>
+  return <p className="gpt-loading gpt-inner" id="chatGPTError">Waiting for ChatGPT response...</p>
 }
 
 ChatGPTQuery.propTypes = {
