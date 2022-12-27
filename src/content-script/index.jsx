@@ -7,7 +7,7 @@ import './styles.scss'
 import { SUGGESTIONS_BOX, REWRITE_DIALOG } from './consts' 
 
 enable = true;
-selected_text = '';
+observer_on_new_message = null;
 
 function createBaseElement(elementType = "div", className) {
   const container = document.createElement(elementType);
@@ -80,6 +80,12 @@ function removeChatGPTButton() {
   chatGPTButtonElements[0].remove();
 }
 
+function removeChatGPTSuggestionBox() {
+  const chatGPTSuggestionBoxElements = document.getElementsByClassName(SUGGESTIONS_BOX);
+  if (chatGPTSuggestionBoxElements.length === 0) return;
+  chatGPTSuggestionBoxElements[0].remove();
+}
+
 function createButtonElement() {
   const container = createBaseElement('button', "chat-gpt-button");
   container.innerHTML = getChatGPTSvgLogo();
@@ -88,9 +94,11 @@ function createButtonElement() {
 
 function setContainer2OnClick(container2, bodyInput) {
   container2.onclick = () => {
-    const elementExists2 = document.getElementsByClassName(SUGGESTIONS_BOX);
-    bodyInput.innerHTML = document.getElementsByClassName(REWRITE_DIALOG)[0].innerHTML;
-    elementExists2[0].remove();
+    const rewriteDialogElements = document.getElementsByClassName(REWRITE_DIALOG);
+    if (rewriteDialogElements.length > 0) {
+      bodyInput.innerHTML = rewriteDialogElements[0].innerHTML;
+      removeChatGPTSuggestionBox();
+    }  
   }
 }
 
@@ -153,20 +161,31 @@ function handleMutations(mutations) {
     } else {
       const currentUrl = window.location.href;
       if (currentUrl.startsWith("https://mail.google.com/mail/u/0/#inbox?compose=")) {
-        const bodyInput = document.querySelector('.Am.Al.editable');
-        const observer = new MutationObserver(function(mutations) {
-          mutations.forEach(async function(mutation) {
-            if (enable) {
-              handleChatGPTButton(bodyInput);
-            }
+        if (observer_on_new_message == null) {
+          const bodyInput = document.querySelector('.Am.Al.editable');
+          observer_on_new_message = new MutationObserver(function(mutations) {
+            mutations.forEach(async function(mutation) {
+              if (enable) {
+                
+                handleChatGPTButton(bodyInput);
+              }
+            });
           });
-        });
-        observer.observe(bodyInput, {
-          attributes: true,
-          childList: true,
-          characterData: true
-        });
+          observer_on_new_message.observe(bodyInput, {
+            attributes: true,
+            childList: true,
+            characterData: true
+          });
+        }
+        
       }
+    }
+
+    if (document.querySelector('.Am.Al.editable') == null && observer_on_new_message != null) {
+      observer_on_new_message.disconnect();
+      removeChatGPTButton();
+      removeChatGPTSuggestionBox();
+      observer_on_new_message = null;
     }
   });
 }

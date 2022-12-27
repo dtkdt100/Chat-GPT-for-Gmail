@@ -10,7 +10,7 @@
     "128": "logo.png"
   },
   "host_permissions": ["https://*.openai.com/"],
-  "permissions": ["storage", "https://mail.google.com/*"],
+  "permissions": ["storage"],
   "background": {
     "service_worker": "background.js"
   },

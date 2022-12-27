@@ -9,7 +9,7 @@
     "48": "logo.png",
     "128": "logo.png"
   },
-  "permissions": ["storage", "https://mail.google.com/*", "https://*.openai.com/"],
+  "permissions": ["storage", "https://*.openai.com/"],
   "background": {
     "service_worker": "background.js"
   },
