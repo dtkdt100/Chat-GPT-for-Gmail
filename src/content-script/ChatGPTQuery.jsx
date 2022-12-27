@@ -40,7 +40,7 @@ function ChatGPTQuery(props) {
 
   if (error === 'UNAUTHORIZED') {
     return (
-      <p className="gpt-inner">
+      <p className="gpt-inner" id="chatGPTError">
         Please login at{' '}
         <a href="https://chat.openai.com" target="_blank" rel="noreferrer">
           chat.openai.com
@@ -51,7 +51,7 @@ function ChatGPTQuery(props) {
   }
   if (error === 'CLOUDFLARE') {
     return (
-      <p className="gpt-inner">
+      <p className="gpt-inner" id="chatGPTError">
         Please pass Cloudflare security check at{' '}
         <a href="https://chat.openai.com" target="_blank" rel="noreferrer">
           chat.openai.com

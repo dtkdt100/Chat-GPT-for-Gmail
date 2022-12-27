@@ -96,7 +96,9 @@ function setContainer2OnClick(container2, bodyInput) {
   container2.onclick = () => {
     const rewriteDialogElements = document.getElementsByClassName(REWRITE_DIALOG);
     if (rewriteDialogElements.length > 0) {
-      bodyInput.innerHTML = rewriteDialogElements[0].innerHTML;
+      if (rewriteDialogElements[0].childNodes[0].id != "chatGPTError") {
+        bodyInput.innerHTML = rewriteDialogElements[0].innerHTML;
+      }
       removeChatGPTSuggestionBox();
     }  
   }
