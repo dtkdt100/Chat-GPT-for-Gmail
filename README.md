@@ -2,6 +2,12 @@
 
 A browser extension to complete your email with the help of ChatGPT
 
+## Installation
+
+### Chrome
+
+Download via extension store: [link](https://chrome.google.com/webstore/detail/chatgpt-for-gmail/nfhkknadfkkoodpcaecgpkdnbjkjhebf)
+
 ## Usage
 
 1. Open [Gmail](https://mail.google.com/)
