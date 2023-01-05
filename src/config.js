@@ -1,7 +1,9 @@
+import { defaults } from 'lodash-es'
 import Browser from 'webextension-polyfill'
 
-export async function getUserConfig() {
-  return Browser.storage.local.get(['on']) // 1-on, 0-off
+export async function getUserConfig() { // 1-on, 0-off
+  const result = await Browser.storage.local.get(['on'])
+  return defaults(result, { on: 1 })
 }
 
 export async function updateUserConfig(updates) {

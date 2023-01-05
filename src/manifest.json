@@ -1,7 +1,7 @@
 {
   "name": "ChatGPT for Gmail",
   "description": "Display ChatGPT response as a suggestion to complete your email",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "manifest_version": 3,
   "icons": {
     "16": "logo.png",
@@ -9,7 +9,7 @@
     "48": "logo.png",
     "128": "logo.png"
   },
-  "host_permissions": ["https://*.openai.com/"],
+  "host_permissions": ["https://*.openai.com/", "https://mail.google.com/*"],
   "permissions": ["storage"],
   "background": {
     "service_worker": "background.js"
