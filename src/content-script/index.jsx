@@ -124,6 +124,7 @@ function createSuggestionBoxElement(bodyInput) {
 
 function setChatGPTButtonOnClick(container, bodyInput) {
   container.onclick = async () => {
+    removeChatGPTSuggestionBox();
     const suggestionsBox = createSuggestionBoxElement(bodyInput);
     setRewriteDialogOnClick(suggestionsBox, bodyInput);
     renderChatCard(suggestionsBox, bodyInput);
