@@ -4,7 +4,9 @@ import { onChanged, getUserConfig } from '../config'
 import ChatGPTCard from './ChatGPTCard'
 import './styles.scss'
 
-import { BUTTON, SUGGESTIONS_BOX, REWRITE_DIALOG, NEW_MESSAGE_INPUT, ERROR_CLASS_NAME, URL_PATTERN } from './consts' 
+import { BUTTON, SUGGESTIONS_BOX, REWRITE_DIALOG, 
+  NEW_MESSAGE_INPUT, ERROR_CLASS_NAME, 
+  URL_PATTERN, REPLAY_MESSAGE_INPUT } from './consts' 
 
 enable = true;
 observer_on_new_message = null;
@@ -163,16 +165,16 @@ function handleMutations(mutations) {
     } else {
       if (URL_PATTERN.test(window.location.href)) {
         if (observer_on_new_message == null) {
-          const bodyInput = document.querySelector(NEW_MESSAGE_INPUT);
+          const bodyInput = document.querySelectorAll(NEW_MESSAGE_INPUT, REPLAY_MESSAGE_INPUT);
+          if (bodyInput.length == 0) return;
           observer_on_new_message = new MutationObserver(function(mutations) {
             mutations.forEach(async function(mutation) {
               if (enable) {
-                
-                handleChatGPTButton(bodyInput);
+                handleChatGPTButton(bodyInput[0]);
               }
             });
           });
-          observer_on_new_message.observe(bodyInput, {
+          observer_on_new_message.observe(bodyInput[0], {
             attributes: true,
             childList: true,
             characterData: true
@@ -182,7 +184,7 @@ function handleMutations(mutations) {
       }
     }
 
-    if (document.querySelector(NEW_MESSAGE_INPUT) == null && observer_on_new_message != null) {
+    if (document.querySelectorAll(NEW_MESSAGE_INPUT, REPLAY_MESSAGE_INPUT).length == 0 && observer_on_new_message != null) {
       observer_on_new_message.disconnect();
       removeChatGPTButton();
       removeChatGPTSuggestionBox();
