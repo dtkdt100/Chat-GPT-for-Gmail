@@ -168,18 +168,17 @@ function isInNodeList(node, nodeList) {
 
 function handleMutations(mutations) {
   mutations.forEach(async function(mutation) {
+    const bodyInput = document.querySelectorAll(NEW_MESSAGE_INPUT, REPLAY_MESSAGE_INPUT); //:Node[]
+
     if (!enable) {
       removeChatGPTButton();
     } else {
       if (URL_PATTERN.test(window.location.href)) {
-        const bodyInput = document.querySelectorAll(NEW_MESSAGE_INPUT, REPLAY_MESSAGE_INPUT); //:Node[]
         if (observer_on_new_messages.length < bodyInput.length) {
           observer_on_new_messages.push(new NewMessageObserver(handleChatGPTButton, bodyInput[bodyInput.length-1]));
-        }
-        
+        } 
       }
     }
-    const bodyInput = document.querySelectorAll(NEW_MESSAGE_INPUT, REPLAY_MESSAGE_INPUT); //:Node[]
 
     if (bodyInput.length < observer_on_new_messages.length) {
       for (let i=0; i<observer_on_new_messages.length; i++) {
