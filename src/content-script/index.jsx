@@ -1,6 +1,7 @@
 import 'github-markdown-css'
 import { render } from 'preact'
 import { onChanged, getUserConfig } from '../config'
+import { NewMessageObserver } from './new_message_observer'
 import ChatGPTCard from './ChatGPTCard'
 import './styles.scss'
 
@@ -9,7 +10,7 @@ import { BUTTON, SUGGESTIONS_BOX, REWRITE_DIALOG,
   URL_PATTERN, REPLAY_MESSAGE_INPUT } from './consts' 
 
 enable = true;
-observer_on_new_message = null;
+observer_on_new_messages = []; // list of NewMessageObserver
 
 function createBaseElement(elementType = "div", className) {
   const container = document.createElement(elementType);
@@ -158,37 +159,38 @@ function handleChatGPTButton(bodyInput) {
   }
 }
 
+function isInNodeList(node, nodeList) {
+  for (let i = 0; i < nodeList.length; i++) {
+    if (nodeList[i] === node) return true;
+  }
+  return false;
+}
+
 function handleMutations(mutations) {
   mutations.forEach(async function(mutation) {
     if (!enable) {
       removeChatGPTButton();
     } else {
       if (URL_PATTERN.test(window.location.href)) {
-        if (observer_on_new_message == null) {
-          const bodyInput = document.querySelectorAll(NEW_MESSAGE_INPUT, REPLAY_MESSAGE_INPUT);
-          if (bodyInput.length == 0) return;
-          observer_on_new_message = new MutationObserver(function(mutations) {
-            mutations.forEach(async function(mutation) {
-              if (enable) {
-                handleChatGPTButton(bodyInput[0]);
-              }
-            });
-          });
-          observer_on_new_message.observe(bodyInput[0], {
-            attributes: true,
-            childList: true,
-            characterData: true
-          });
+        const bodyInput = document.querySelectorAll(NEW_MESSAGE_INPUT, REPLAY_MESSAGE_INPUT); //:Node[]
+        if (observer_on_new_messages.length < bodyInput.length) {
+          observer_on_new_messages.push(new NewMessageObserver(handleChatGPTButton, bodyInput[bodyInput.length-1]));
         }
         
       }
     }
+    const bodyInput = document.querySelectorAll(NEW_MESSAGE_INPUT, REPLAY_MESSAGE_INPUT); //:Node[]
 
-    if (document.querySelectorAll(NEW_MESSAGE_INPUT, REPLAY_MESSAGE_INPUT).length == 0 && observer_on_new_message != null) {
-      observer_on_new_message.disconnect();
-      removeChatGPTButton();
-      removeChatGPTSuggestionBox();
-      observer_on_new_message = null;
+    if (bodyInput.length < observer_on_new_messages.length) {
+      for (let i=0; i<observer_on_new_messages.length; i++) {
+        if (!isInNodeList(observer_on_new_messages[i].getTarget(), bodyInput)) {
+          observer_on_new_messages[i].disconnect();
+          observer_on_new_messages.splice(i, 1);
+          removeChatGPTButton();
+          removeChatGPTSuggestionBox();
+          break;
+        }
+      }
     }
   });
 }
