@@ -72,7 +72,7 @@ function listenToMouseEvent(event) {
   suggestionsBox[0].remove();
 }
 
-function changed(changes, area) {
+function changed(changes) {
   enable = changes.on.newValue === 1;
 }
 
@@ -126,7 +126,7 @@ function createSuggestionBoxElement(bodyInput) {
 
 
 function setChatGPTButtonOnClick(container, bodyInput) {
-  container.onclick = async () => {
+  container.onclick = () => {
     removeChatGPTSuggestionBox();
     const suggestionsBox = createSuggestionBoxElement(bodyInput);
     setRewriteDialogOnClick(suggestionsBox, bodyInput);
@@ -167,7 +167,7 @@ function isInNodeList(node, nodeList) {
 }
 
 function handleMutations(mutations) {
-  mutations.forEach(async function(mutation) {
+  mutations.forEach(() => {
     const bodyInput = document.querySelectorAll(NEW_MESSAGE_INPUT, REPLAY_MESSAGE_INPUT); //:Node[]
 
     if (!enable) {
@@ -194,7 +194,7 @@ function handleMutations(mutations) {
   });
 }
 
-async function run() {
+function run() {
   const div = document.body;
   const observer = new MutationObserver(handleMutations);
   observer.observe(div, {
