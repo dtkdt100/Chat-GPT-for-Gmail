@@ -7,7 +7,7 @@ import './styles.scss'
 
 import { BUTTON, SUGGESTIONS_BOX, REWRITE_DIALOG, 
   NEW_MESSAGE_INPUT, ERROR_CLASS_NAME, 
-  URL_PATTERN, REPLAY_MESSAGE_INPUT } from './consts' 
+  URL_PATTERN, REPLAY_MESSAGE_INPUT, SUBJECT_INPUT } from './consts' 
 
 enable = true;
 observer_on_new_messages = []; // list of NewMessageObserver
@@ -95,11 +95,22 @@ function createButtonElement() {
   return container;
 }
 
+function setSubject(suggestionText) {
+  const subjectField = document.querySelectorAll(SUBJECT_INPUT);
+  const subject = suggestionText.childNodes[0].innerText.split(":");
+  if (subjectField.length > 0) {
+    subjectField[0].value = subject;
+  }
+  suggestionText.childNodes[0].remove();
+}
+
 function setRewriteDialogOnClick(container, bodyInput) {
   container.onclick = () => {
     const rewriteDialogElements = document.getElementsByClassName(REWRITE_DIALOG);
     if (rewriteDialogElements.length > 0) {
-      if (rewriteDialogElements[0].childNodes[0].id != ERROR_CLASS_NAME) {
+      suggestionText = rewriteDialogElements[0].childNodes[0];
+      if (suggestionText.id != ERROR_CLASS_NAME) {
+        setSubject(suggestionText);
         bodyInput.innerHTML = rewriteDialogElements[0].innerHTML;
       }
       removeChatGPTSuggestionBox();
@@ -111,7 +122,9 @@ function renderChatCard(suggestionsBox, bodyInput) {
   const rewriteDialog = createBaseElement('div', REWRITE_DIALOG);
   suggestionsBox.appendChild(rewriteDialog);
   render(
-    <ChatGPTCard question={"complete my email. write only the email: \n" + bodyInput.innerHTML}/>,
+    <ChatGPTCard question={"complete my email. " +
+    "write only the email. write the subject at the top with enter \n"
+     + bodyInput.innerHTML}/>,
     rewriteDialog,
   );
 }
