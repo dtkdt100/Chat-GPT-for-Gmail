@@ -97,9 +97,9 @@ function createButtonElement() {
 
 function setSubject(suggestionText) {
   const subjectField = document.querySelectorAll(SUBJECT_INPUT);
-  const subject = suggestionText.childNodes[0].innerText.split(":");
+  const subject = suggestionText.childNodes[0].innerText.split(":")[1];
   if (subjectField.length > 0) {
-    subjectField[0].value = subject;
+    subjectField[0].childNodes[2].value = subject;
   }
   suggestionText.childNodes[0].remove();
 }
