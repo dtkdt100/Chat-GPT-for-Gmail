@@ -41,7 +41,6 @@ function setChatGPTButton(container, textDialog) {
   container.style.bottom = `${window.innerHeight - bottom + 5}px`;
 }
 
-
 function setContainerPosUnderText(container, textDialog) {
   const pos = getLastTextPosition(textDialog);
   container.style.top = `${Math.ceil(pos.top + pos.height)}px`;
@@ -49,7 +48,6 @@ function setContainerPosUnderText(container, textDialog) {
   container.style.width = "330px";
   container.style.position = "absolute";
 }
-
 
 function highlightText(textElement) {
   textElement.focus();
@@ -84,7 +82,6 @@ function memoryChange(changes) {
     subjectCompletion = changes.subject.newValue === 1;
    }
 }
-
 
 function removeChatGPTButton() {
   const chatGPTButtonElements = document.getElementsByClassName(BUTTON);
@@ -149,7 +146,6 @@ function createSuggestionBoxElement(bodyInput) {
   highlightText(bodyInput);
   return suggestionsBox;
 }
-
 
 function setChatGPTButtonOnClick(container, bodyInput) {
   container.onclick = () => {
