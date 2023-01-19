@@ -7,10 +7,14 @@ import './styles.scss'
 
 import { BUTTON, SUGGESTIONS_BOX, REWRITE_DIALOG, 
   NEW_MESSAGE_INPUT, ERROR_CLASS_NAME, 
-  URL_PATTERN, REPLAY_MESSAGE_INPUT } from './consts' 
+  URL_PATTERN, REPLAY_MESSAGE_INPUT, SUBJECT_INPUT } from './consts' 
 
-enable = true;
-observer_on_new_messages = []; // list of NewMessageObserver
+const COMPLETE_EMAIL_RULE = "complete my email. write only the email";
+const COMPLETE_SUBJECT_RULE = "write the subject at the top with enter";
+
+let enableChatGPTSuggestion = true;
+let subjectCompletion = true;
+let observer_on_new_messages = []; // list of NewMessageObserver
 
 function createBaseElement(elementType = "div", className) {
   const container = document.createElement(elementType);
@@ -72,8 +76,13 @@ function listenToMouseEvent(event) {
   suggestionsBox[0].remove();
 }
 
-function changed(changes) {
-  enable = changes.on.newValue === 1;
+function memoryChange(changes) {
+   if (changes.on) {
+    enableChatGPTSuggestion = changes.on.newValue === 1;
+   }
+   if (changes.subject) {
+    subjectCompletion = changes.subject.newValue === 1;
+   }
 }
 
 
@@ -95,11 +104,22 @@ function createButtonElement() {
   return container;
 }
 
+function setSubject(suggestionText) {
+  const subjectField = document.querySelectorAll(SUBJECT_INPUT);
+  const subject = suggestionText.childNodes[0].innerText.split(":")[1];
+  if (subjectField.length > 0 && subject != undefined) {
+    subjectField[0].childNodes[2].value = subject;
+    suggestionText.childNodes[0].remove();
+  }
+}
+
 function setRewriteDialogOnClick(container, bodyInput) {
   container.onclick = () => {
     const rewriteDialogElements = document.getElementsByClassName(REWRITE_DIALOG);
     if (rewriteDialogElements.length > 0) {
-      if (rewriteDialogElements[0].childNodes[0].id != ERROR_CLASS_NAME) {
+      suggestionText = rewriteDialogElements[0].childNodes[0];
+      if (suggestionText.id != ERROR_CLASS_NAME) {
+        setSubject(suggestionText);
         bodyInput.innerHTML = rewriteDialogElements[0].innerHTML;
       }
       removeChatGPTSuggestionBox();
@@ -110,8 +130,14 @@ function setRewriteDialogOnClick(container, bodyInput) {
 function renderChatCard(suggestionsBox, bodyInput) {
   const rewriteDialog = createBaseElement('div', REWRITE_DIALOG);
   suggestionsBox.appendChild(rewriteDialog);
+  rules = COMPLETE_EMAIL_RULE;
+  if (subjectCompletion) {
+    rules += COMPLETE_SUBJECT_RULE;
+  }
+
   render(
-    <ChatGPTCard question={"complete my email. write only the email: \n" + bodyInput.innerHTML}/>,
+    <ChatGPTCard question={rules + " \n"
+     + bodyInput.innerHTML}/>,
     rewriteDialog,
   );
 }
@@ -138,8 +164,6 @@ function setChatGPTButtonOnClick(container, bodyInput) {
 function createChatGPTButton(bodyInput) {
   const container = createButtonElement();
   setChatGPTButtonOnClick(container, bodyInput);
-
-
   const father = createBaseElement('div', "no");
   father.setAttribute("style", "position: absolute; z-index: 20000000000;");
   const child = createBaseElement('div', "no");
@@ -170,7 +194,7 @@ function handleMutations(mutations) {
   mutations.forEach(() => {
     const bodyInput = document.querySelectorAll(NEW_MESSAGE_INPUT, REPLAY_MESSAGE_INPUT); //:Node[]
 
-    if (!enable) {
+    if (!enableChatGPTSuggestion) {
       removeChatGPTButton();
     } else {
       if (URL_PATTERN.test(window.location.href)) {
@@ -203,11 +227,13 @@ function run() {
     characterData: true
   });
   document.addEventListener("click", listenToMouseEvent);
-  onChanged(changed);
+  onChanged(memoryChange);
 }
 
 async function getConfigFirst() {
-  enable = (await getUserConfig()).on==1;
+  config = await getUserConfig();
+  enableChatGPTSuggestion = config.on;
+  subjectCompletion = config.subject;
   run();
 }
 

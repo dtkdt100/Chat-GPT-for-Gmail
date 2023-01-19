@@ -1,27 +1,29 @@
 import { useCallback, useEffect, useState } from 'preact/hooks'
-import { getUserConfig, updateUserConfig } from '../config'
+import { getUserConfig, updateUserConfig, EnableMode } from '../config'
 import './styles.css'
 
 
 function Popup() {
-  const [number, setTriggerMode] = useState<number>()
+  const [enableMode, setEnableMode] = useState<EnableMode>(EnableMode.On)
+  const [subjectCompletion, setSubjectCompletion] = useState<EnableMode>(EnableMode.On)
 
   useEffect(() => {
     getUserConfig().then((config) => {
-      setTriggerMode(config.on || 1)
-      const checkbox = document.querySelector('input[type=checkbox]');
-      if (checkbox && 'checked' in checkbox) {
-        checkbox.checked = config.on;
-      }
+      setEnableMode(config.on)
+      setSubjectCompletion(config.subject)
     })
   }, [])
 
-  function onTriggerModeChange(event) {
-    const checkbox = event.target;
-    const enable: number = (checkbox.checked) ? 1 : 0;
-    setTriggerMode(enable)
-    updateUserConfig({ on: enable })
-  }
+  const onEnableModeChange = useCallback((mode: EnableMode) => {
+    console.log(mode);
+    setEnableMode(mode)
+    updateUserConfig({ on: mode })
+  }, [])
+
+  const onSubjectChange = useCallback((mode: EnableMode) => {
+    setSubjectCompletion(mode)
+    updateUserConfig({ subject: mode })
+  }, [])
 
 
   return (
@@ -30,7 +32,15 @@ function Popup() {
         <fieldset>
           <legend>Enable ChatGPT for Gmail</legend>
           <label className="switch">
-            <input type="checkbox" onChange={onTriggerModeChange} />
+            <input type="checkbox" checked={Boolean(enableMode)} onChange={(val) => onEnableModeChange(val.target.checked ? 1 : 0 as EnableMode)} />
+            <span className="slider round"></span>
+          </label>
+        </fieldset>
+
+        <fieldset>
+          <legend>Enable Subject Completion</legend>
+          <label className="switch">
+          <input type="checkbox" checked={Boolean(subjectCompletion)} onChange={(val) => onSubjectChange(val.target.checked ? 1 : 0 as EnableMode)} />
             <span className="slider round"></span>
           </label>
         </fieldset>
@@ -38,7 +48,5 @@ function Popup() {
     </div>
   )
 }
-
-
 
 export default Popup
