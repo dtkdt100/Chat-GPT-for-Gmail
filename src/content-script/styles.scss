@@ -10,7 +10,7 @@
 
 .chat-gpt-suggestionsBox {
   display: flex;
-  z-index: 99;
+  z-index: 1000;
   position: absolute;
   direction: ltr;
   align-items: center;
@@ -32,6 +32,7 @@
   border-radius: 3px;
   flex-direction: column;
   padding: 10px;
+  z-index: 1000;
   background-color: rgb(255, 255, 255);
 }
 
@@ -43,7 +44,7 @@
   width: 28px;
   height: 28px;
   display: flex;
-  z-index: 20000000000;
+  z-index: 99;
   position: relative;
   box-shadow: 0 2px 14px 0 rgba(63, 62, 77, 0.20);
   transition: all 0.5s ease;

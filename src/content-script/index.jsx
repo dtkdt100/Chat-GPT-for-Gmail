@@ -161,7 +161,7 @@ function createChatGPTButton(bodyInput) {
   const container = createButtonElement();
   setChatGPTButtonOnClick(container, bodyInput);
   const father = createBaseElement('div', "no");
-  father.setAttribute("style", "position: absolute; z-index: 20000000000;");
+  father.setAttribute("style", "position: absolute; z-index: 999;");
   const child = createBaseElement('div', "no");
   child.setAttribute("style", "display: flex; column-gap: 4px;");
   father.appendChild(child);
