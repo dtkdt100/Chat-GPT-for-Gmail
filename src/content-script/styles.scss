@@ -34,6 +34,8 @@
   padding: 10px;
   z-index: 1000;
   background-color: rgb(255, 255, 255);
+  max-height: 200px;
+  overflow-y: auto;
 }
 
 .chat-gpt-rewrite:hover {
