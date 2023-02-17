@@ -101,5 +101,9 @@ Browser.runtime.onMessage.addListener(async (message) => {
   if (message.type === 'FEEDBACK') {
     const token = await getAccessToken()
     await sendMessageFeedback(token, message.data)
+  } else if (message.type === 'OPEN_OPTIONS_PAGE') {
+    Browser.runtime.openOptionsPage()
+  } else if (message.type === 'GET_ACCESS_TOKEN') {
+    return getAccessToken()
   }
 })

@@ -16,6 +16,10 @@
   "browser_action": {
     "default_popup": "popup.html"
   },
+  "options_ui": {
+    "page": "options.html",
+    "open_in_tab": true
+  },
   "content_scripts": [
     {
       "css": [ "content-script.css" ],

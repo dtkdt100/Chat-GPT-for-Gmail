@@ -1,0 +1,134 @@
+@import url(https://fonts.googleapis.com/css?family=Roboto:300,500);
+
+* {
+  margin: 0;
+  padding: 0;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  box-sizing: border-box;
+}
+
+body {
+  min-width: 280px;
+  min-height: 280px;
+  padding: 0;
+  margin: 0;
+  background: #f1f1f1;
+}
+
+.logo {
+  display: flex;
+  padding: 8px;
+  align-items: center;
+}
+
+img {
+  height: 69px;
+  width: 69px;
+  margin-right: 8px;
+}
+
+h1 {
+  font-size: 28px;
+  font-weight: 300;
+  overflow-wrap: break-word;
+}
+
+.settingֲ  {
+  transition: background-color 150ms cubic-bezier(0.4, 0, 0.2, 1) 0ms;
+}
+
+.setting:hover {
+  background-color: rgba(0, 0, 0, 0.08);
+}
+
+.switch-input {
+  display: none;
+}
+.switch-label {
+  font-size: 14px;
+  position: relative;
+  display: block;
+  min-width: 112px;
+  cursor: pointer;
+  font-weight: 500;
+  text-align: left;
+  padding: 16px 0 16px 44px;
+  margin-left: 14px;
+  user-select: none;
+}
+
+.switch-label:before,
+.switch-label:after {
+  content: "";
+  position: absolute;
+  margin: 0;
+  outline: 0;
+  top: 50%;
+  -ms-transform: translate(0, -50%);
+  -webkit-transform: translate(0, -50%);
+  transform: translate(0, -50%);
+  -webkit-transition: all 0.3s ease;
+  transition: all 0.3s ease;
+}
+.switch-label:before {
+  left: 1px;
+  width: 34px;
+  height: 14px;
+  background-color: #9e9e9e;
+  border-radius: 8px;
+}
+.switch-label:after {
+  left: 0;
+  width: 20px;
+  height: 20px;
+  background-color: #fafafa;
+  border-radius: 50%;
+  box-shadow: 0 3px 1px -2px rgba(0, 0, 0, 0.14),
+    0 2px 2px 0 rgba(0, 0, 0, 0.098), 0 1px 5px 0 rgba(0, 0, 0, 0.084);
+}
+.switch-label .toggle--on {
+  display: none;
+}
+.switch-label .toggle--off {
+  display: inline-block;
+}
+.switch-input:checked + .switch-label:before {
+  background-color: #a5d6a7;
+}
+.switch-input:checked + .switch-label:after {
+  background-color: #4caf50;
+  -ms-transform: translate(80%, -50%);
+  -webkit-transform: translate(80%, -50%);
+  transform: translate(80%, -50%);
+}
+.switch-input:checked + .switch-label .toggle--on {
+  display: inline-block;
+}
+.switch-input:checked + .switch-label .toggle--off {
+  display: none;
+}
+
+hr {
+  border-top: 1px solid #ccc;
+}
+
+.teaser {
+  display: block;
+  height: 100px;
+  width: 100%;
+  background: #f1f1f1;
+  border: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-decoration: none;
+  color: black;
+  font-size: 1.2rem;
+  transition: background-color 150ms cubic-bezier(0.4, 0, 0.2, 1) 0ms;
+}
+
+.teaser:hover {
+  background-color: rgba(0, 0, 0, 0.08);
+}
