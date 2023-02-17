@@ -20,7 +20,7 @@
   "content_scripts": [
     {
       "css": [ "content-script.css" ],
-      "matches": [ "https://mail.google.com/*" ],
+      "matches": [ "<all_urls>" ],
       "js": ["content-script.js"],
       "run_at": "document_end"
     }

@@ -37,7 +37,7 @@ function getChatGPTSvgLogo() {
 
 function setChatGPTButton(container, textDialog) {
   const { left, bottom } = textDialog.getBoundingClientRect();
-  container.style.left = `${left + 20}px`;
+  container.style.left = `${left + 5}px`;
   container.style.bottom = `${window.innerHeight - bottom + 5}px`;
 }
 
@@ -193,11 +193,9 @@ function handleMutations(mutations) {
     if (!enableChatGPTSuggestion) {
       removeChatGPTButton();
     } else {
-      if (URL_PATTERN.test(window.location.href)) {
-        if (observer_on_new_messages.length < bodyInput.length) {
-          observer_on_new_messages.push(new NewMessageObserver(handleChatGPTButton, bodyInput[bodyInput.length-1]));
-        } 
-      }
+      if (observer_on_new_messages.length < bodyInput.length) {
+        observer_on_new_messages.push(new NewMessageObserver(handleChatGPTButton, bodyInput[bodyInput.length-1]));
+      } 
     }
 
     if (bodyInput.length < observer_on_new_messages.length) {
