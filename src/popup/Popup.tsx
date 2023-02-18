@@ -1,6 +1,8 @@
 import { useCallback, useEffect, useState } from 'preact/hooks'
 import { getUserConfig, updateUserConfig, EnableMode } from '../config'
 import './styles.css'
+import Browser from 'webextension-polyfill'
+
 
 function getGithubLogoSvg() {
   return <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="19px" height="19px" viewBox="0 0 19 18" version="1.1">
@@ -32,6 +34,10 @@ function Popup() {
     updateUserConfig({ subject: mode })
   }, [])
 
+  const openOptionsPage = useCallback(() => {
+    Browser.runtime.sendMessage({ type: 'OPEN_OPTIONS_PAGE' })
+  }, [])
+
 
   return (
     <ul>
@@ -49,6 +55,12 @@ function Popup() {
         <label for="subjectCompletion" class="switch-label"><span data-message="subjectCompletion">Subject Completion</span></label>
       </form>
       <hr></hr>
+      <form class="setting" onClick={openOptionsPage}>
+       
+        <label for="enable" class="non-switch-label"><span data-message="enable">Open Options Page</span></label>      
+      </form>
+      <hr></hr>
+
       <a href={"https://github.com/dtkdt100/Chat-GPT-for-Gmail"} target="_blank" class="teaser">
         <div style="text-align: center;">
           <span data-message="sourceCode">Source code </span>
