@@ -1,4 +1,4 @@
 import { render } from 'preact'
-import Popup from './Options'
+import Options from './Options'
 
-render(<Popup />, document.getElementById('app'))
+render(<Options />, document.getElementById('app'))
