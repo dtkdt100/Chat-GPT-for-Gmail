@@ -1,5 +1,4 @@
 @import url(https://fonts.googleapis.com/css?family=Roboto:300,500);
-@import url(https://kit.fontawesome.com/a2eea8b04c.css);
 
 * {
   margin: 0;
@@ -46,20 +45,6 @@ h1 {
 .switch-input {
   display: none;
 }
-
-.non-switch-label {
-  font-size: 14px;
-  position: relative;
-  display: block;
-  min-width: 112px;
-  cursor: pointer;
-  font-weight: 500;
-  text-align: left;
-  padding: 16px 0 16px 0px;
-  margin-left: 14px;
-  user-select: none;
-}
-
 .switch-label {
   font-size: 14px;
   position: relative;

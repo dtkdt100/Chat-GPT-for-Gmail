@@ -1,7 +1,10 @@
 import ExpiryMap from 'expiry-map'
+import { getProviderConfigs, ProviderType } from '../config'
+import { ChatGPTProvider, getChatGPTAccessToken, sendMessageFeedback } from './providers/chatgpt'
+import { OpenAIProvider } from './providers/openai'
+import { Provider } from './types'
 import { v4 as uuidv4 } from 'uuid'
 import Browser from 'webextension-polyfill'
-import { sendMessageFeedback, setConversationProperty } from './chatgpt.js'
 import { fetchSSE } from './fetch-sse.js'
 
 import { Answer } from '../messaging.js'
@@ -26,60 +29,34 @@ async function getAccessToken(): Promise<string> {
 }
 
 async function generateAnswers(port: Browser.Runtime.Port, question: string) {
-  const accessToken = await getAccessToken()
+  const providerConfigs = await getProviderConfigs()
 
-  let conversationId: string | undefined
-  const deleteConversation = () => {
-    if (conversationId) {
-      setConversationProperty(accessToken, conversationId, { is_visible: false })
-    }
+  let provider: Provider
+  if (providerConfigs.provider === ProviderType.ChatGPT) {
+    const token = await getChatGPTAccessToken()
+    provider = new ChatGPTProvider(token)
+  } else if (providerConfigs.provider === ProviderType.GPT3) {
+    const { apiKey, model } = providerConfigs.configs[ProviderType.GPT3]!
+    provider = new OpenAIProvider(apiKey, model)
+  } else {
+    throw new Error(`Unknown provider ${providerConfigs.provider}`)
   }
 
   const controller = new AbortController()
   port.onDisconnect.addListener(() => {
     controller.abort()
-    deleteConversation()
+    cleanup?.()
   })
 
-  await fetchSSE('https://chat.openai.com/backend-api/conversation', {
-    method: 'POST',
+  const { cleanup } = await provider.generateAnswer({
+    prompt: question,
     signal: controller.signal,
-    headers: {
-      'Content-Type': 'application/json',
-      Authorization: `Bearer ${accessToken}`,
-    },
-    body: JSON.stringify({
-      action: 'next',
-      messages: [
-        {
-          id: uuidv4(),
-          role: 'user',
-          content: {
-            content_type: 'text',
-            parts: [question],
-          },
-        },
-      ],
-      model: 'text-davinci-002-render',
-      parent_message_id: uuidv4(),
-    }),
-    onMessage(message: string) {
-      console.debug('sse message', message)
-      if (message === '[DONE]') {
+    onEvent(event) {
+      if (event.type === 'done') {
         port.postMessage({ event: 'DONE' })
-        deleteConversation()
         return
       }
-      const data = JSON.parse(message)
-      const text = data.message?.content?.parts?.[0]
-      conversationId = data.conversation_id
-      if (text) {
-        port.postMessage({
-          text,
-          messageId: data.message.id,
-          conversationId: data.conversation_id,
-        } as Answer)
-      }
+      port.postMessage(event.data)
     },
   })
 }
@@ -92,14 +69,17 @@ Browser.runtime.onConnect.addListener((port) => {
     } catch (err: any) {
       console.error(err)
       port.postMessage({ error: err.message })
-      cache.delete(KEY_ACCESS_TOKEN)
     }
   })
 })
 
 Browser.runtime.onMessage.addListener(async (message) => {
   if (message.type === 'FEEDBACK') {
-    const token = await getAccessToken()
+    const token = await getChatGPTAccessToken()
     await sendMessageFeedback(token, message.data)
+  } else if (message.type === 'OPEN_OPTIONS_PAGE') {
+    Browser.runtime.openOptionsPage()
+  } else if (message.type === 'GET_ACCESS_TOKEN') {
+    return getChatGPTAccessToken()
   }
 })

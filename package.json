@@ -8,13 +8,14 @@
     "prepare": "husky install"
   },
   "dependencies": {
+    "@geist-ui/core": "^2.3.8",
     "@picocss/pico": "^1.5.6",
     "@primer/octicons-react": "^17.9.0",
     "esbuild-sass-plugin": "^2.4.3",
     "eventsource-parser": "^0.0.5",
     "expiry-map": "^2.0.0",
-    "lodash-es": "^4.17.21",
     "github-markdown-css": "^5.1.0",
+    "lodash-es": "^4.17.21",
     "preact": "^10.11.3",
     "prop-types": "^15.8.1",
     "punycode": "^2.1.1",
@@ -22,6 +23,8 @@
     "react-dom": "npm:@preact/compat@^17.1.2",
     "react-markdown": "^8.0.4",
     "rehype-highlight": "^6.0.0",
+    "swr": "^2.0.0",
+    "toastify-js": "^1.12.0",
     "uuid": "^9.0.0"
   },
   "devDependencies": {
@@ -33,6 +36,7 @@
     "husky": "^8.0.0",
     "lint-staged": "^13.1.0",
     "prettier": "^2.8.0",
+    "tailwindcss": "^3.2.4",
     "webextension-polyfill": "^0.10.0"
   },
   "lint-staged": {
