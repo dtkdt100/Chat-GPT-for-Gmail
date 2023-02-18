@@ -25,10 +25,11 @@ function createBaseElement(elementType = "div", className) {
 }
 
 function getLastTextPosition(textElement) {
-  if (textElement.childElementCount === 0) {
-    textElement.innerHTML = `<div>${textElement.innerHTML}</div>`;
-  }
-  return textElement.lastChild.getBoundingClientRect();
+  const lastTextNode = textElement.childNodes[textElement.childNodes.length - 1];
+  const range = document.createRange();
+  range.selectNodeContents(lastTextNode);
+  const rect = range.getBoundingClientRect();
+  return rect;
 }
 
 function getChatGPTSvgLogo() {
@@ -42,7 +43,9 @@ function setChatGPTButton(container, textDialog) {
 }
 
 function setContainerPosUnderText(container, textDialog) {
+  console.log("ChatGPT button clicked 2.1.1")
   const pos = getLastTextPosition(textDialog);
+  console.log("ChatGPT button clicked 2.1.2")
   container.style.top = `${Math.ceil(pos.top + pos.height)}px`;
   container.style.left = `${pos.left}px`;
   container.style.width = "330px";
@@ -142,18 +145,27 @@ function renderChatCard(suggestionsBox, bodyInput) {
 function createSuggestionBoxElement(bodyInput) {
   const suggestionsBox = document.createElement('div'); 
   suggestionsBox.className = SUGGESTIONS_BOX;
+  console.log("ChatGPT button clicked 2.1")
   setContainerPosUnderText(suggestionsBox, bodyInput);
+  console.log("ChatGPT button clicked 2.2")
   highlightText(bodyInput);
+  console.log("ChatGPT button clicked 2.3")
   return suggestionsBox;
 }
 
 function setChatGPTButtonOnClick(container, bodyInput) {
   container.onclick = () => {
+    console.log("ChatGPT button clicked")
     removeChatGPTSuggestionBox();
+    console.log("ChatGPT button clicked 1")
     const suggestionsBox = createSuggestionBoxElement(bodyInput);
+    console.log("ChatGPT button clicked 2")
     setRewriteDialogOnClick(suggestionsBox, bodyInput);
+    console.log("ChatGPT button clicked 3")
     renderChatCard(suggestionsBox, bodyInput);
+    console.log("ChatGPT button clicked 4")
     document.body.appendChild(suggestionsBox);
+    console.log("ChatGPT button clicked 5")
   };
 }
 
