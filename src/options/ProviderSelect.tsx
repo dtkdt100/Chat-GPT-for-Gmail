@@ -3,7 +3,7 @@ import { FC, useCallback, useState } from 'react'
 import useSWR from 'swr'
 import { fetchExtensionConfigs } from '../api'
 import { getProviderConfigs, ProviderConfigs, ProviderType, saveProviderConfigs } from '../config'
-
+import Toastify from 'toastify-js'
 
 
 interface ConfigProps {
@@ -20,7 +20,6 @@ const ConfigPanel: FC<ConfigProps> = ({ config, models }) => {
   const [tab, setTab] = useState<ProviderType>(config.provider)
   const { bindings: apiKeyBindings } = useInput(config.configs[ProviderType.GPT3]?.apiKey ?? '')
   const [model, setModel] = useState(config.configs[ProviderType.GPT3]?.model ?? models[0])
-  const { setToast } = useToasts()
 
   const save = useCallback(async () => {
     if (tab === ProviderType.GPT3) {
@@ -39,8 +38,17 @@ const ConfigPanel: FC<ConfigProps> = ({ config, models }) => {
         apiKey: apiKeyBindings.value,
       },
     })
-    setToast({ text: 'Changes saved', type: 'success' })
-  }, [apiKeyBindings.value, model, models, setToast, tab])
+    Toastify({
+      text: "Changes saved",
+      duration: 1000,
+      gravity: "top",
+      className: "info",
+      position: "center",
+      style: {
+        background: "linear-gradient(to right, #00b09b, #96c93d)",
+      },
+    }).showToast();
+  }, [apiKeyBindings.value, model, models, tab])
 
   return (
     <div className="flex flex-col gap-3">
