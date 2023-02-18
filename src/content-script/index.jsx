@@ -190,6 +190,8 @@ function handleMutations(mutations) {
   mutations.forEach(() => {
     const bodyInput = document.querySelectorAll(NEW_MESSAGE_INPUT, REPLAY_MESSAGE_INPUT); //:Node[]
 
+    if (bodyInput.length === 0) return;
+
     if (!enableChatGPTSuggestion) {
       removeChatGPTButton();
     } else {

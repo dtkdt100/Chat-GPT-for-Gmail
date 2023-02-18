@@ -9,6 +9,15 @@
   box-sizing: border-box;
 }
 
+.svg-icon {
+  display: inline-block;
+  vertical-align: middle;
+  fill: currentColor;
+  /*margin 5px to bottom and 6px to left*/
+  margin-bottom: 6px;
+  margin-left: 6px;
+}
+
 body {
   min-width: 280px;
   min-height: 280px;
@@ -50,7 +59,7 @@ h1 {
 .non-switch-label {
   font-size: 14px;
   position: relative;
-  display: block;
+  display:inline-block;
   min-width: 112px;
   cursor: pointer;
   font-weight: 500;

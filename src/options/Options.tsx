@@ -4,6 +4,7 @@ import './styles.css'
 import ProviderSelect from './ProviderSelect'
 
 
+
 function Options() {
   const [enableMode, setEnableMode] = useState<EnableMode>(EnableMode.Off)
   const [subjectCompletion, setSubjectCompletion] = useState<EnableMode>(EnableMode.Off)
@@ -34,9 +35,6 @@ function Options() {
       </div>
       <hr></hr>
       <h1 data-message="extension_name">AI Provider</h1>
-      {/* <Text h3 className="mt-5 mb-0">
-        AI Provider
-      </Text> */}
       <ProviderSelect />
     </ul>
   )
