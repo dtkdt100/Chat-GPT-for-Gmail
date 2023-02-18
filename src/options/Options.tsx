@@ -1,30 +1,12 @@
-import { useCallback, useEffect, useState } from 'preact/hooks'
-import { getUserConfig, updateUserConfig, EnableMode } from '../config'
+import { useEffect } from 'preact/hooks'
 import './styles.css'
 import ProviderSelect from './ProviderSelect'
 
 
 
 function Options() {
-  const [enableMode, setEnableMode] = useState<EnableMode>(EnableMode.Off)
-  const [subjectCompletion, setSubjectCompletion] = useState<EnableMode>(EnableMode.Off)
-
   useEffect(() => {
-    getUserConfig().then((config) => {
-      setEnableMode(config.on)
-      setSubjectCompletion(config.subject)
-    })
-  }, [])
-
-  const onEnableModeChange = useCallback((mode: EnableMode) => {
-    console.log(mode);
-    setEnableMode(mode)
-    updateUserConfig({ on: mode })
-  }, [])
-
-  const onSubjectChange = useCallback((mode: EnableMode) => {
-    setSubjectCompletion(mode)
-    updateUserConfig({ subject: mode })
+    
   }, [])
 
   return (
