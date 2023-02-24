@@ -61,7 +61,7 @@ function Popup() {
       <hr></hr>
       <form class="setting" onClick={openOptionsPage}>
         {getExternalLinkIcon()}
-        <label for="enable" class="non-switch-label"><span data-message="enable">Open Options Page</span></label>      
+        <label for="options_page" class="non-switch-label"><span data-message="options_page">Open Options Page</span></label>      
       </form>
       <hr></hr>
 
