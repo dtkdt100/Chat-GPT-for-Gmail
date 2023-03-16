@@ -1,7 +1,7 @@
 {
   "name": "ChatGPT for Gmail",
   "description": "Display ChatGPT response as a suggestion to complete emails",
-  "version": "1.0.5",
+  "version": "1.0.6",
   "manifest_version": 3,
   "icons": {
     "16": "logo.png",
@@ -24,7 +24,7 @@
   "content_scripts": [
     {
       "css": [ "content-script.css" ],
-      "matches": [ "<all_urls>" ],
+      "matches": [ "https://mail.google.com/*" ],
       "js": ["content-script.js"],
       "run_at": "document_end"
     }
