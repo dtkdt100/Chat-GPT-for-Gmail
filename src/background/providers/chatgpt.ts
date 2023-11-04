@@ -59,13 +59,14 @@ export class ChatGPTProvider implements Provider {
   }
 
   private async getModelName(): Promise<string> {
-    try {
-      const models = await this.fetchModels()
-      return models[0].slug
-    } catch (err) {
-      console.error(err)
-      return 'text-davinci-002-render'
-    }
+    return 'text-davinci-002-render-sha';
+    // try {
+    //   const models = await this.fetchModels()
+    //   return models[0].slug
+    // } catch (err) {
+    //   console.error(err)
+    //   return 'text-davinci-002-render'
+    // }
   }
 
   async generateAnswer(params: GenerateAnswerParams) {
@@ -92,10 +93,10 @@ export class ChatGPTProvider implements Provider {
         messages: [
           {
             id: uuidv4(),
-            role: 'user',
+            author: {role: 'user'},
             content: {
               content_type: 'text',
-              parts: [params.prompt],
+              parts: ["hello"],
             },
           },
         ],
@@ -103,7 +104,10 @@ export class ChatGPTProvider implements Provider {
         parent_message_id: uuidv4(),
       }),
       onMessage(message: string) {
-        console.debug('sse message', message)
+        console.log('sse message', message)
+
+  
+
         if (message === '[DONE]') {
           params.onEvent({ type: 'done' })
           cleanup()
@@ -116,6 +120,12 @@ export class ChatGPTProvider implements Provider {
           console.error(err)
           return
         }
+
+        params.onEvent({
+          type: 'fuck',
+          data: data
+        })
+
         const text = data.message?.content?.parts?.[0]
         if (text) {
           conversationId = data.conversation_id

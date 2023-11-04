@@ -1,16 +1,15 @@
 import 'github-markdown-css'
 import { render } from 'preact'
 import { onChanged, getUserConfig } from '../config'
-import { NewMessageObserver } from './new_message_observer'
-import ChatGPTCard from './ChatGPTCard'
+import ChatGPTContainer from './ChatGPTContainer'
 import './styles.scss'
 
 import { BUTTON, SUGGESTIONS_BOX, REWRITE_DIALOG, 
-  NEW_MESSAGE_INPUT, ERROR_CLASS_NAME, 
+  NEW_MESSAGE, ERROR_CLASS_NAME, NEW_MESSAGE_INPUT,
   URL_PATTERN, REPLAY_MESSAGE_INPUT, SUBJECT_INPUT } from './consts' 
 
-const COMPLETE_EMAIL_RULE = "complete my email. write only the email";
-const COMPLETE_SUBJECT_RULE = "write the subject at the top with enter";
+const COMPLETE_EMAIL_RULE = "complete my email. write only the email. ";
+const COMPLETE_SUBJECT_RULE = "write the subject at the top with enter. ";
 
 let enableChatGPTSuggestion = true;
 let subjectCompletion = true;
@@ -135,9 +134,16 @@ function renderChatCard(suggestionsBox, bodyInput) {
     rules += COMPLETE_SUBJECT_RULE;
   }
 
+
+
+  // render(
+  //   <ChatGPTCard question={rules + " \n"
+  //    + bodyInput.innerHTML}/>,
+  //   rewriteDialog,
+  // );
+
   render(
-    <ChatGPTCard question={rules + " \n"
-     + bodyInput.innerHTML}/>,
+    <ChatGPTContainer question={"Hello"}/>,
     rewriteDialog,
   );
 }
@@ -169,27 +175,26 @@ function setChatGPTButtonOnClick(container, bodyInput) {
   };
 }
 
-function createChatGPTButton(bodyInput) {
+function createChatGPTButton(lineOfActions, bodyInput) {
   const container = createButtonElement();
   setChatGPTButtonOnClick(container, bodyInput);
-  const father = createBaseElement('div', "no");
-  father.setAttribute("style", "position: absolute; z-index: 999;");
-  const child = createBaseElement('div', "no");
-  child.setAttribute("style", "display: flex; column-gap: 4px;");
+  const father = createBaseElement('td', "chat-gpt-for-gmail-button");
+  const child = createBaseElement('div', "button");
+  child.setAttribute("data-tooltip", "ChatGPT for Gmail");
+  child.setAttribute("role", "button");
   father.appendChild(child);
   child.appendChild(container);
-  setChatGPTButton(father, bodyInput);
-  document.body.appendChild(father);
+  lineOfActions.insertBefore(father, lineOfActions.childNodes[1])
 }
 
-function handleChatGPTButton(bodyInput) {
-  const elementExists = document.getElementsByClassName(BUTTON);
-  if (elementExists.length === 0 && document.activeElement === bodyInput) {
-    createChatGPTButton(bodyInput);
-  } else if (elementExists.length > 0 && document.activeElement !== bodyInput) {
-    removeChatGPTButton();
-  }
-}
+// function handleChatGPTButton(bodyInput) {
+//   const elementExists = document.getElementsByClassName(BUTTON);
+//   if (elementExists.length === 0 && document.activeElement === bodyInput) {
+//     createChatGPTButton(bodyInput);
+//   } else if (elementExists.length > 0 && document.activeElement !== bodyInput) {
+//     removeChatGPTButton();
+//   }
+// }
 
 function isInNodeList(node, nodeList) {
   for (let i = 0; i < nodeList.length; i++) {
@@ -198,32 +203,45 @@ function isInNodeList(node, nodeList) {
   return false;
 }
 
-function handleMutations(mutations) {
-  mutations.forEach(() => {
-    const bodyInput = document.querySelectorAll(NEW_MESSAGE_INPUT, REPLAY_MESSAGE_INPUT); //:Node[]
+foundElement = false;
 
-    if (bodyInput.length === 0) return;
+function handleMutations(mutations) {
+  //mutations.forEach(() => {
+    const bodyInput = document.querySelectorAll(NEW_MESSAGE); //:Node[]
+
+    if (bodyInput.length === 0) {
+      foundElement = false;
+      return;
+    }
 
     if (!enableChatGPTSuggestion) {
-      removeChatGPTButton();
+      //removeChatGPTButton();
     } else {
-      if (observer_on_new_messages.length < bodyInput.length) {
-        observer_on_new_messages.push(new NewMessageObserver(handleChatGPTButton, bodyInput[bodyInput.length-1]));
-      } 
+      //
+      if (!foundElement) {
+        const newMessage = bodyInput[0].children[2];
+        createChatGPTButton(newMessage.querySelectorAll(".btC")[0], newMessage.querySelectorAll(NEW_MESSAGE_INPUT)[0]);
+        foundElement = true;
+        //console.log(bodyInput[0].children[2].querySelectorAll(".btC")[0]);
+      }
+      
+      // if (observer_on_new_messages.length < bodyInput.length) {
+      //   observer_on_new_messages.push(new NewMessageObserver(handleChatGPTButton, bodyInput[bodyInput.length-1]));
+      // } 
     }
 
-    if (bodyInput.length < observer_on_new_messages.length) {
-      for (let i=0; i<observer_on_new_messages.length; i++) {
-        if (!isInNodeList(observer_on_new_messages[i].getTarget(), bodyInput)) {
-          observer_on_new_messages[i].disconnect();
-          observer_on_new_messages.splice(i, 1);
-          removeChatGPTButton();
-          removeChatGPTSuggestionBox();
-          break;
-        }
-      }
-    }
-  });
+    // if (bodyInput.length < observer_on_new_messages.length) {
+    //   for (let i=0; i<observer_on_new_messages.length; i++) {
+    //     if (!isInNodeList(observer_on_new_messages[i].getTarget(), bodyInput)) {
+    //       observer_on_new_messages[i].disconnect();
+    //       observer_on_new_messages.splice(i, 1);
+    //       removeChatGPTButton();
+    //       removeChatGPTSuggestionBox();
+    //       break;
+    //     }
+    //   }
+    // }
+  //});
 }
 
 function run() {

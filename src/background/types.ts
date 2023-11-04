@@ -7,6 +7,9 @@ export type Event =
     }
   | {
       type: 'done'
+    }| {
+      type: 'fuck',
+      data: any
     }
 
 export interface GenerateAnswerParams {
